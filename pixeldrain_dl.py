@@ -37,7 +37,6 @@ import random
 import argparse
 import urllib.request
 import urllib.error
-import webbrowser
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import quote, urlparse
 
@@ -487,42 +486,6 @@ def handle_dir(did, outdir, proxies, as_zip=False):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
-def open_browser(target, proxies):
-    """For when the proxy only allows a real browser: open the resolved URL in
-    the default browser and let Chrome download it directly. Galleries are
-    fetched as a single zip."""
-    parsed = parse_target(target)
-    if not parsed:
-        print(f"Unrecognized link: {target}")
-        return 0, 1
-    kind, _id = parsed
-    proxy = proxies[0]
-
-    if kind == "dir":
-        # No whole-folder ZIP, so open the official folder page (pick files there).
-        url = f"https://pixeldrain.com/d/{_id}"
-        label = "folder page (for per-file download, run without --browser)"
-    elif kind == "list":
-        url = proxy + f"api/list/{_id}/zip"   # whole gallery -> single zip
-        label = "whole gallery ZIP"
-    else:
-        url = proxy + f"api/file/{_id}?download"  # force single-file download
-        label = "single file"
-
-    print(f"\n[open in browser] {label}")
-    print(f"  {url}")
-    try:
-        webbrowser.open(url)
-        print("  -> the download should start in your default browser.")
-        if kind == "file":
-            print("  (if it only plays, use the 'download' item in the player's menu)")
-        return 1, 0
-    except Exception as e:
-        print(f"  Failed to open browser: {e}")
-        print(f"  Copy this URL into your browser's address bar:\n  {url}")
-        return 0, 1
-
-
 def run(target, outdir, as_zip, proxies):
     parsed = parse_target(target)
     if not parsed:
@@ -549,10 +512,6 @@ def main():
                     help="download a gallery/folder as a single ZIP")
     ap.add_argument("--print", dest="print_only", action="store_true",
                     help="print the resolved download URLs without downloading")
-    ap.add_argument("--browser", action="store_true",
-                    help="open the resolved URL in the default browser instead of "
-                         "downloading directly (use when the proxy only allows a real "
-                         "browser; galleries become a single zip)")
     ap.add_argument("--refresh", action="store_true", help="force-refresh the proxy list")
     ap.add_argument("--proxy", help="use a specific proxy instead of the list (e.g. https://my.proxy/)")
     # Force UTF-8 output so non-ASCII names don't break on legacy consoles.
@@ -604,16 +563,10 @@ def main():
         print("No URL provided. Exiting.")
         return
 
-    if args.browser:
-        print("  mode: open in browser (Chrome downloads directly)")
-
     total_ok = total_fail = 0
     for u in urls:
         try:
-            if args.browser:
-                ok, fail = open_browser(u, proxies)
-            else:
-                ok, fail = run(u, args.out, args.zip, proxies)
+            ok, fail = run(u, args.out, args.zip, proxies)
         except KeyboardInterrupt:
             print("\nInterrupted by user.")
             break
@@ -627,10 +580,7 @@ def main():
         total_fail += fail
 
     print(f"\nDone: {total_ok} succeeded, {total_fail} failed")
-    if args.browser:
-        print("Downloads run in the browser; files go to your browser's download folder.")
-    else:
-        print(f"Saved to: {os.path.abspath(args.out)}")
+    print(f"Saved to: {os.path.abspath(args.out)}")
 
 
 if __name__ == "__main__":

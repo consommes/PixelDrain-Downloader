@@ -21,7 +21,7 @@ and lets you pull large files / whole folders without hitting that cap.
   in random order (no time wasted hammering dead hosts)
 - **Resume** — interrupted downloads continue from the partial `.part` file via HTTP Range
 - **Failover** — if one proxy node fails, the next one is tried automatically
-- Cross-platform Python; optional real-browser fallback via Selenium
+- Cross-platform, single-file Python CLI
 
 ## Requirements
 
@@ -69,15 +69,12 @@ Run with no arguments for an interactive prompt (handy when double-clicking the
 | `-o, --out <dir>` | Output directory (default: current directory) |
 | `--zip` | Download a gallery as a single zip (folders fall back to per-file) |
 | `--print` | Print the resolved download URLs without downloading |
-| `--browser` | Open the URL in the default browser instead of downloading directly |
 | `--refresh` | Force-refresh the proxy list |
 | `--proxy <url>` | Use a specific proxy instead of the auto-discovered list |
 
-### Windows launchers
+### Windows launcher
 
-- `download.bat` — run the direct downloader (drag a URL onto it, or run and paste)
-- `open-in-browser.bat` — open in the browser instead (`--browser`)
-- `download-selenium.bat` — Selenium-based per-file fallback (`selenium_dl.py`)
+- `download.bat` — run the downloader (drag a URL onto it, or run and paste when prompted)
 
 ## How it works
 
