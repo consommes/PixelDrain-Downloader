@@ -1,0 +1,8 @@
+# Recommended: Chrome TLS impersonation so the CDN proxy (behind Cloudflare)
+# accepts the request. Without it the script falls back to urllib, which
+# Cloudflare will usually block.
+curl_cffi>=0.7
+
+# Optional: only needed for selenium_dl.py (real-browser fallback).
+# Uncomment if you want to use it.
+# selenium>=4.6

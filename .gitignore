@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Runtime cache
+.pd_proxy_cache.json
+
+# Partial / in-progress downloads
+*.part
+*.crdownload
+
+# Downloaded media (don't commit downloads)
+*.mp4
+*.mkv
+*.avi
+*.zip
+*.iso
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/
