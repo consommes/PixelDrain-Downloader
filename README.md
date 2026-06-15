@@ -7,8 +7,13 @@ It fetches file metadata from the official Pixeldrain API and streams the actual
 bytes through a community CDN proxy (`*.pixeldrain.eu.cc`), with automatic node
 discovery, failover and **resume** support for large files.
 
+Because the bytes are fetched through the proxy, Pixeldrain sees the proxy's IP
+instead of yours — so this **bypasses Pixeldrain's per-IP daily download limit**
+and lets you pull large files / whole folders without hitting that cap.
+
 ## Features
 
+- **Bypasses the per-IP daily download limit** by streaming through the proxy nodes
 - **Single files** (`/u/{id}`), **galleries** (`/l/{id}`) and **filesystem folders** (`/d/{id}`)
 - **Sub-paths** — `…/d/{id}/some/subfolder` downloads just that subfolder
 - **Recursive folders** — walks into subdirectories and keeps the structure on disk
@@ -83,10 +88,21 @@ Run with no arguments for an interactive prompt (handy when double-clicking the
 4. Stream each file from `node + /api/filesystem/...` (or `/api/file/...`), resuming from
    `.part` on failure and failing over to another node.
 
+## Download limits
+
+Pixeldrain caps how much a single IP can download per day (the free transfer
+limit). This tool routes the download through the community proxy nodes, so
+Pixeldrain attributes the traffic to the proxy's IP rather than yours — which is
+how it gets around the **per-IP limit**.
+
+Note that the proxy itself has its own shared capacity: if a node is busy or
+rate-limited it may slow down or fail, in which case the tool fails over to
+another node, and you can re-run the same command to resume from the `.part`
+file.
+
 ## Notes & disclaimer
 
 - The CDN proxy is operated by a third party; availability and speed depend on it.
-- Pixeldrain free transfer limits still apply per region/time window.
 - Use this only to download your own uploads or files you are authorized to download,
   and in accordance with Pixeldrain's terms of service.
 - Provided "as is" without warranty. See [`LICENSE`](LICENSE).
